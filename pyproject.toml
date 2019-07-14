@@ -8,7 +8,6 @@ authors = ["Augustus Ostow <ostowster@gmail.com>"]
 python = "^3.7"
 bs4 = "^0.0.1"
 requests = "^2.22"
-pandas = "^0.24.2"
 google-api-python-client = "^1.7"
 google-auth-httplib2 = "^0.0.3"
 google-auth-oauthlib = "^0.4.0"

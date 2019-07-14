@@ -2,8 +2,6 @@ from dataclasses import asdict, dataclass
 from datetime import date, time, timedelta
 from typing import List, Optional
 
-from pandas import DataFrame
-
 
 @dataclass
 class Event:
@@ -40,6 +38,3 @@ class DanceStudioScraper:
 
     def as_records(self) -> List[dict]:
         return [asdict(event) for event in self.events]
-
-    def as_dataframe(self) -> DataFrame:
-        return DataFrame(self.as_records())
