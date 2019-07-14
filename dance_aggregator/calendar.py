@@ -1,8 +1,10 @@
 from datetime import datetime
 import pathlib
+from typing import Set
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+import pytz
 
 from dance_aggregator.lib import Event
 
@@ -38,7 +40,7 @@ def make_calendar_event_doc(event: Event) -> dict:
         datetime.combine(event.date, event.end_time).isoformat(),
     )
     event_doc = {
-        "summary": event.title,
+        "summary": f"{event.studio}-{event.title}",
         "location": event.location,
         "description": description,
         "start": {"dateTime": start_datetime, "timeZone": "America/New_York"},
@@ -51,3 +53,19 @@ def make_calendar_event_doc(event: Event) -> dict:
 def insert_event(event: Event) -> None:
     event_doc = make_calendar_event_doc(event)
     service.events().insert(calendarId=CALENDAR_ID, body=event_doc).execute()
+
+
+def get_event_ids(time_min=datetime.today()) -> Set[int]:
+    timeMin = (
+        datetime.combine(time_min.date(), datetime.min.time())
+        .replace(tzinfo=pytz.timezone("US/Eastern"))
+        .isoformat()
+    )
+    events = service.events().list(calendarId=CALENDAR_ID, timeMin=timeMin).execute()
+    return {event["id"] for event in events["items"]}
+
+
+def remove_upcoming_events():
+    event_ids = get_event_ids()
+    for event_id in event_ids:
+        service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()

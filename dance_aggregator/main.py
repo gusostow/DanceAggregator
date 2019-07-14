@@ -14,6 +14,9 @@ def main():
         logging.info(f"Collecting events for {studio.studio_name}")
         events += studio.get_events()
 
+    if len(events) > 0:
+        calendar.remove_upcoming_events()
+
     for event in events:
         calendar.insert_event(event)
 
