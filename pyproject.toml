@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "dance_aggregator"
+version = "0.1.0"
+description = ""
+authors = ["Augustus Ostow <ostowster@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+bs4 = "^0.0.1"
+requests = "^2.22"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.0"
+ipykernel = "^5.1"
+autopep8 = "^1.4"
+flake8 = "^3.7"
+mypy = "^0.720.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
