@@ -24,7 +24,9 @@ class DanceStudioScraper:
     def scrape_date(self, target_date: date) -> List[Event]:
         raise NotImplementedError
 
-    def get_events(self, start_date: Optional[date] = None, n_days: int = 14) -> None:
+    def get_events(
+        self, start_date: Optional[date] = None, n_days: int = 14
+    ) -> List[Event]:
         if start_date is None:
             start_date = date.today()
         target_dates = [
@@ -34,6 +36,7 @@ class DanceStudioScraper:
         for target_date in target_dates:
             events += self.scrape_date(target_date)
         self.events = events
+        return events
 
     def as_records(self) -> List[dict]:
         return [asdict(event) for event in self.events]

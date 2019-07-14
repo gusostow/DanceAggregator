@@ -1,5 +1,6 @@
 import logging
 
+from dance_aggregator import calendar
 from dance_aggregator.studios import gibney
 
 
@@ -7,14 +8,14 @@ INCLUDED_STUDIOS = [gibney.Gibney]
 
 
 def main():
-    output = []
+    events = []
     for Studio in INCLUDED_STUDIOS:
         studio = Studio()
         logging.info(f"Collecting events for {studio.studio_name}")
-        studio.get_events()
-        output += studio.as_records()
+        events += studio.get_events()
 
-        # Doesn't do anything with records yet
+    for event in events:
+        calendar.insert_event(event)
 
 
 if __name__ == "__main__":
