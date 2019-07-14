@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta
 from typing import List, Optional, Tuple
 
 import bs4
@@ -81,3 +81,10 @@ def scrape_date(target_date: date) -> List[Event]:
     records = [make_event_record(target_date, soup) for soup in event_soups]
     return records
 
+
+def get_all_events(start_date: date, days: int) -> List[Event]:
+    dates = [start_date + timedelta(days=offset) for offset in range(days + 1)]
+    events: List[Event] = []
+    for target_date in dates:
+        events += scrape_date(target_date)
+    return events
