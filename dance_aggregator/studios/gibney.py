@@ -31,8 +31,8 @@ def make_event_record(studio_name: str, row_soup: Tag) -> Event:
     return Event(
         title=title,
         url=url,
-        start_time=start_time,
-        end_time=end_time,
+        start_datetime=start_time,
+        end_datetime=end_time,
         studio=studio_name,
         instructor=instructor,
         location=location,

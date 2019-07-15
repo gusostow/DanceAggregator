@@ -8,8 +8,8 @@ class Event:
     title: str
     instructor: str
     studio: str
-    start_time: time
-    end_time: time
+    start_datetime: time
+    end_datetime: time
     url: str
     location: Optional[str] = None
 

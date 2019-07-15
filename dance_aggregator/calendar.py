@@ -30,21 +30,17 @@ service = login()
 def make_calendar_event_doc(event: Event) -> dict:
     description = f'''
     Studio: {event.studio}
-    Price: {event.price}
+    Instructor: {event.instructor}
     Url: {event.url}
 
     Last Crawled: {datetime.now()}
     '''
-    start_datetime, end_datetime = (
-        datetime.combine(event.date, event.start_time).isoformat(),
-        datetime.combine(event.date, event.end_time).isoformat(),
-    )
     event_doc = {
-        "summary": f"{event.studio}-{event.title}",
+        "summary": event.title,
         "location": event.location,
         "description": description,
-        "start": {"dateTime": start_datetime, "timeZone": "America/New_York"},
-        "end": {"dateTime": end_datetime, "timeZone": "America/New_York"},
+        "start": {"dateTime": event.start_datetime, "timeZone": "America/New_York"},
+        "end": {"dateTime": event.end_datetime, "timeZone": "America/New_York"},
     }
 
     return event_doc
