@@ -1,5 +1,5 @@
-from dataclasses import asdict, dataclass
-from datetime import date, time, timedelta
+from dataclasses import dataclass
+from datetime import datetime
 from typing import List, Optional
 
 
@@ -8,8 +8,8 @@ class Event:
     title: str
     instructor: str
     studio: str
-    start_datetime: time
-    end_datetime: time
+    start_datetime: datetime
+    end_datetime: datetime
     url: str
     location: Optional[str] = None
 

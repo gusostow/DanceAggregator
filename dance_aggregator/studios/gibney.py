@@ -1,3 +1,5 @@
+import pytz
+from dateutil import parser
 from typing import List
 
 import bs4
@@ -10,16 +12,21 @@ from dance_aggregator.lib import DanceStudioScraper, Event
 def make_event_record(studio_name: str, row_soup: Tag) -> Event:
     title = row_soup.find("span", {"class": "classname"}).text.strip()
     instructor = row_soup.find("td", {"class": "trainer"}).text.strip()
+
+    eastern = pytz.timezone("US/Eastern")
+
     start_time = (
         row_soup.find("span", attrs={"class": "hc_starttime"})
         .get("data-datetime")
         .replace('"', "")
     )
+    start_datetime = eastern.localize(parser.parse(start_time, ignoretz=True))
     end_time = (
         row_soup.find("span", attrs={"class": "hc_endtime"})
         .get("data-datetime")
         .replace('"', "")
     )
+    end_datetime = eastern.localize(parser.parse(end_time, ignoretz=True))
 
     url = row_soup.find("span", {"class": "classname"}).a.get("data-url")
 
@@ -31,8 +38,8 @@ def make_event_record(studio_name: str, row_soup: Tag) -> Event:
     return Event(
         title=title,
         url=url,
-        start_datetime=start_time,
-        end_datetime=end_time,
+        start_datetime=start_datetime,
+        end_datetime=end_datetime,
         studio=studio_name,
         instructor=instructor,
         location=location,

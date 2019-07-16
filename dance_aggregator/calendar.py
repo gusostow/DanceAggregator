@@ -39,10 +39,15 @@ def make_calendar_event_doc(event: Event) -> dict:
         "summary": event.title,
         "location": event.location,
         "description": description,
-        "start": {"dateTime": event.start_datetime, "timeZone": "America/New_York"},
-        "end": {"dateTime": event.end_datetime, "timeZone": "America/New_York"},
+        "start": {
+            "dateTime": event.start_datetime.isoformat(),
+            "timeZone": "America/New_York",
+        },
+        "end": {
+            "dateTime": event.end_datetime.isoformat(),
+            "timeZone": "America/New_York",
+        },
     }
-
     return event_doc
 
 
@@ -52,16 +57,39 @@ def insert_event(event: Event) -> None:
 
 
 def get_event_ids(time_min=datetime.today()) -> Set[int]:
-    timeMin = (
-        datetime.combine(time_min.date(), datetime.min.time())
-        .replace(tzinfo=pytz.timezone("US/Eastern"))
-        .isoformat()
-    )
-    events = service.events().list(calendarId=CALENDAR_ID, timeMin=timeMin).execute()
-    return {event["id"] for event in events["items"]}
+    if time_min is None:
+        timeMin = None
+    else:
+        timeMin = (
+            datetime.combine(time_min.date(), datetime.min.time())
+            .replace(tzinfo=pytz.timezone("US/Eastern"))
+            .isoformat()
+        )
+
+    events = []
+    pageToken = None
+    while True:
+        response = (
+            service.events()
+            .list(calendarId=CALENDAR_ID, timeMin=timeMin, pageToken=pageToken)
+            .execute()
+        )
+        events += response["items"]
+        if "nextPageToken" not in response:
+            break
+        else:
+            pageToken = response["nextPageToken"]
+
+    return {event["id"] for event in events}
 
 
 def remove_upcoming_events():
     event_ids = get_event_ids()
+    for event_id in event_ids:
+        service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()
+
+
+def nuke_all_events():
+    event_ids = get_event_ids(time_min=None)
     for event_id in event_ids:
         service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()
