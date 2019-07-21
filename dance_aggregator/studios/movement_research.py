@@ -52,7 +52,7 @@ def make_day_event_records(day: dict) -> List[Event]:
             start_datetime=start_datetime,
             end_datetime=end_datetime,
             url=f"https://movementresearch.org/event/{event['url']}",
-            location=unquote(event["locationName"]),
+            location=unquote(event["locationName"].replace("&#039;", "'")),
         )
         records.append(record)
 

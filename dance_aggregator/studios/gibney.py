@@ -69,6 +69,5 @@ class Gibney(DanceStudioScraper):
         events = []
         for event_row in event_soups:
             event_record = make_event_record(self.studio_name, event_row)
-            logger.info(str(event_record))
             events.append(event_record)
         return events
