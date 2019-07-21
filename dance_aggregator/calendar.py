@@ -57,7 +57,7 @@ def make_calendar_event_doc(event: Event) -> dict:
 @ExponentialBackoff()
 def insert_event(event: Event, calendar_id: str) -> None:
     event_doc = make_calendar_event_doc(event)
-    logger.info(f"Inserting event: {event.title}")
+    logger.info(f"Inserting event: {event.title} {event.start_datetime}")
     service.events().insert(calendarId=calendar_id, body=event_doc).execute()
 
 

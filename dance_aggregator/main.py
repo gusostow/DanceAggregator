@@ -2,8 +2,9 @@ import logging
 
 from dance_aggregator import calendar
 
-# from dance_aggregator.lib import exponential_backoff
-from dance_aggregator.studios import gibney, movement_research
+from dance_aggregator.studios.dance_wave import DanceWave
+from dance_aggregator.studios.gibney import Gibney
+from dance_aggregator.studios.movement_research import MovementResearch
 
 
 handler = logging.StreamHandler()
@@ -11,14 +12,12 @@ formatter = logging.Formatter("%(asctime)s %(levelname)8s %(name)s | %(message)s
 handler.setFormatter(formatter)
 logger = logging.getLogger("dance_aggregator")
 logger.addHandler(handler)
-logger.setLevel(logging.INFO)  # This toggles all the logging in your app
+logger.setLevel(logging.INFO)
 
 INCLUDED_STUDIOS = (
-    (gibney.Gibney(), "87nse6kec4lkia3dumm4hi92p0@group.calendar.google.com"),
-    (
-        movement_research.MovementResearch(),
-        "nk9j7d6s2bcovajull5hf7i5j4@group.calendar.google.com",
-    ),
+    (Gibney(), "87nse6kec4lkia3dumm4hi92p0@group.calendar.google.com"),
+    (MovementResearch(), "nk9j7d6s2bcovajull5hf7i5j4@group.calendar.google.com"),
+    (DanceWave(), "2n577qjvg1bdoorj12d0hhh75o@group.calendar.google.com"),
 )
 
 
