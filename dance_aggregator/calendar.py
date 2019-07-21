@@ -7,7 +7,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import pytz
 
-from dance_aggregator.lib import Event
+from dance_aggregator.lib import Event, ExponentialBackoff
 
 logger = logging.getLogger("dance_aggregator")
 
@@ -54,6 +54,7 @@ def make_calendar_event_doc(event: Event) -> dict:
     return event_doc
 
 
+@ExponentialBackoff()
 def insert_event(event: Event) -> None:
     event_doc = make_calendar_event_doc(event)
     logger.info(f"Inserting event: {event.title}")
@@ -87,8 +88,13 @@ def get_event_ids(time_min=None) -> Set[int]:
     return {event["id"] for event in events}
 
 
+@ExponentialBackoff()
+def remove_event(event_id: int) -> None:
+    logger.info(f"Removing event: {event_id}")
+    service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()
+
+
 def remove_events(time_min=datetime.today()):
     event_ids = get_event_ids(time_min=time_min)
     for event_id in event_ids:
-        logger.info(f"Removing event: {event_id}")
-        service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()
+        remove_event(event_id)

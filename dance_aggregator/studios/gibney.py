@@ -1,3 +1,4 @@
+import logging
 import pytz
 from dateutil import parser
 from typing import List
@@ -7,6 +8,8 @@ from bs4.element import Tag
 import requests
 
 from dance_aggregator.lib import DanceStudioScraper, Event
+
+logger = logging.getLogger("dance_aggregator")
 
 
 def make_event_record(studio_name: str, row_soup: Tag) -> Event:
@@ -65,5 +68,7 @@ class Gibney(DanceStudioScraper):
 
         events = []
         for event_row in event_soups:
-            events.append(make_event_record(self.studio_name, event_row))
+            event_record = make_event_record(self.studio_name, event_row)
+            logger.info(str(event_record))
+            events.append(event_record)
         return events
