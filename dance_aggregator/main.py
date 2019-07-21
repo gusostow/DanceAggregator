@@ -3,7 +3,7 @@ import logging
 from dance_aggregator import calendar
 
 # from dance_aggregator.lib import exponential_backoff
-from dance_aggregator.studios import gibney
+from dance_aggregator.studios import gibney, movement_research
 
 
 handler = logging.StreamHandler()
@@ -13,14 +13,12 @@ logger = logging.getLogger("dance_aggregator")
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)  # This toggles all the logging in your app
 
-INCLUDED_STUDIOS = [gibney.Gibney]
+INCLUDED_STUDIOS = [gibney.Gibney(), movement_research.MovementResearch()]
 
 
 def main():
     events = []
-    for Studio in INCLUDED_STUDIOS:
-        studio = Studio()
-        logger.info(f"Collecting events for {studio.studio_name}")
+    for studio in INCLUDED_STUDIOS:
         events += studio.get_events()
 
     if len(events) > 0:
