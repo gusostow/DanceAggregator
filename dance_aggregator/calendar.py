@@ -55,13 +55,13 @@ def make_calendar_event_doc(event: Event) -> dict:
 
 
 @ExponentialBackoff()
-def insert_event(event: Event) -> None:
+def insert_event(event: Event, calendar_id: str) -> None:
     event_doc = make_calendar_event_doc(event)
     logger.info(f"Inserting event: {event.title}")
-    service.events().insert(calendarId=CALENDAR_ID, body=event_doc).execute()
+    service.events().insert(calendarId=calendar_id, body=event_doc).execute()
 
 
-def get_event_ids(time_min=None) -> Set[int]:
+def get_event_ids(calendar_id: str, time_min=None) -> Set[int]:
     if time_min is None:
         timeMin = None
     else:
@@ -76,7 +76,7 @@ def get_event_ids(time_min=None) -> Set[int]:
     while True:
         response = (
             service.events()
-            .list(calendarId=CALENDAR_ID, timeMin=timeMin, pageToken=pageToken)
+            .list(calendarId=calendar_id, timeMin=timeMin, pageToken=pageToken)
             .execute()
         )
         events += response["items"]
@@ -89,12 +89,12 @@ def get_event_ids(time_min=None) -> Set[int]:
 
 
 @ExponentialBackoff()
-def remove_event(event_id: int) -> None:
+def remove_event(event_id: int, calendar_id: str) -> None:
     logger.info(f"Removing event: {event_id}")
-    service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()
+    service.events().delete(calendarId=calendar_id, eventId=event_id).execute()
 
 
-def remove_events(time_min=datetime.today()):
-    event_ids = get_event_ids(time_min=time_min)
+def remove_events(calendar_id: str, time_min=datetime.today()):
+    event_ids = get_event_ids(calendar_id, time_min=time_min)
     for event_id in event_ids:
-        remove_event(event_id)
+        remove_event(event_id, calendar_id)
