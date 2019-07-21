@@ -1,12 +1,15 @@
-from datetime import datetime
+import logging
 import pathlib
-from typing import Set
+from datetime import datetime
+from typing import List, Set
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import pytz
 
 from dance_aggregator.lib import Event
+
+logger = logging.getLogger("dance_aggregator")
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 CREDENTIALS_FILE = str(
@@ -53,10 +56,11 @@ def make_calendar_event_doc(event: Event) -> dict:
 
 def insert_event(event: Event) -> None:
     event_doc = make_calendar_event_doc(event)
+    logger.info(f"Inserting event: {event.title}")
     service.events().insert(calendarId=CALENDAR_ID, body=event_doc).execute()
 
 
-def get_event_ids(time_min=datetime.today()) -> Set[int]:
+def get_event_ids(time_min=None) -> Set[int]:
     if time_min is None:
         timeMin = None
     else:
@@ -66,7 +70,7 @@ def get_event_ids(time_min=datetime.today()) -> Set[int]:
             .isoformat()
         )
 
-    events = []
+    events: List[dict] = []
     pageToken = None
     while True:
         response = (
@@ -83,13 +87,8 @@ def get_event_ids(time_min=datetime.today()) -> Set[int]:
     return {event["id"] for event in events}
 
 
-def remove_upcoming_events():
-    event_ids = get_event_ids()
+def remove_events(time_min=datetime.today()):
+    event_ids = get_event_ids(time_min=time_min)
     for event_id in event_ids:
-        service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()
-
-
-def nuke_all_events():
-    event_ids = get_event_ids(time_min=None)
-    for event_id in event_ids:
+        logger.info(f"Removing event: {event_id}")
         service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()

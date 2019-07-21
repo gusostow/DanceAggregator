@@ -30,7 +30,7 @@ def make_event_record(studio_name: str, row_soup: Tag) -> Event:
 
     url = row_soup.find("span", {"class": "classname"}).a.get("data-url")
 
-    class_page_soup = bs4.BeautifulSoup(requests.get(url).content)
+    class_page_soup = bs4.BeautifulSoup(requests.get(url).content, features="lxml")
     location = class_page_soup.find(
         "div", {"class": "class_description"}
     ).span.text.split(": ")[-1]
@@ -52,7 +52,8 @@ class Gibney(DanceStudioScraper):
         self.soup = bs4.BeautifulSoup(
             requests.get(
                 "https://widgets.healcode.com/widgets/schedules/00108315175.json?mobile=false&version=0.1"
-            ).json()["contents"]
+            ).json()["contents"],
+            features="lxml",
         )
 
     def get_events(self) -> List[Event]:
