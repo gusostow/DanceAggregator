@@ -16,7 +16,7 @@ class Cunningham(DanceStudioScraper):
     def __init__(self):
         super().__init__(studio_name="Cunningham Trust")
 
-    def event_from_row(self, row_soup: Tag) -> Event:
+    def make_event_record(self, row_soup: Tag) -> Event:
         spans = row_soup.find_all("span")
 
         time_raw: str = spans[0].text
@@ -55,7 +55,7 @@ class Cunningham(DanceStudioScraper):
         )
         output: List[Event] = []
         for row in schedule_rows:
-            event = self.event_from_row(row)
+            event = self.make_event_record(row)
             if event.start_datetime.date() >= datetime.today().date():
                 output.append(event)
         return output
