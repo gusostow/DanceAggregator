@@ -1,7 +1,7 @@
 import logging
 import pytz
 import re
-from datetime import date
+from datetime import date, datetime, timedelta
 from dateutil import parser
 from typing import Optional, List
 
@@ -69,10 +69,13 @@ class DanceWave(DanceStudioScraper):
             "div", {"class": re.compile(r"^simcal-fullcal-qtip-id")}
         )
 
+        max_event_datetime = datetime.today() + timedelta(days=60)
         events: List[Event] = []
         for event_div in event_divs:
             event = self.make_event_record(event_div)
             if event is not None:
-                if event.start_datetime.date() >= date.today():
+                if event.start_datetime.replace(tzinfo=None) > max_event_datetime:
+                    break
+                elif event.start_datetime.date() >= date.today():
                     events.append(event)
         return events
