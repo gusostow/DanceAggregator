@@ -15,6 +15,7 @@ logger = logging.getLogger("dance_aggregator")
 class Peridance(DanceStudioScraper):
     def __init__(self):
         super().__init__(studio_name="Peridance Center")
+        self.calendar_id = "nv2j59b7lpa07ckovkhgr9g4bc@group.calendar.google.com"
 
     def parse_day_schedule(self, date: date) -> List[Event]:
         base_url = "http://www.peridance.com/openclasses.cfm"

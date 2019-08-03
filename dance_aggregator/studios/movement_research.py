@@ -62,6 +62,7 @@ def make_day_event_records(day: dict) -> List[Event]:
 class MovementResearch(DanceStudioScraper):
     def __init__(self):
         super().__init__(studio_name=STUDIO)
+        self.calendar_id = "nk9j7d6s2bcovajull5hf7i5j4@group.calendar.google.com"
 
     def get_events(self) -> List[Event]:
         this_month_calendar, next_month_calendar = get_raw_json()

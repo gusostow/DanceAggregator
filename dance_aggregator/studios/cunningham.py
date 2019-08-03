@@ -15,6 +15,7 @@ logger = logging.getLogger("dance_aggregator")
 class Cunningham(DanceStudioScraper):
     def __init__(self):
         super().__init__(studio_name="Cunningham Trust")
+        self.calendar_id = "g16a87cvnb8d7to3281m99fgq4@group.calendar.google.com"
 
     def make_event_record(self, row_soup: Tag) -> Event:
         spans = row_soup.find_all("span")

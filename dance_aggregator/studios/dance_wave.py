@@ -17,6 +17,7 @@ logger = logging.getLogger("dance_aggregator")
 class DanceWave(DanceStudioScraper):
     def __init__(self):
         super().__init__(studio_name="Dancewave")
+        self.calendar_id = "2n577qjvg1bdoorj12d0hhh75o@group.calendar.google.com"
 
     def make_event_record(self, event_div: Tag) -> Optional[Event]:
         title = event_div.find("span", {"class": "simcal-event-title"}).text

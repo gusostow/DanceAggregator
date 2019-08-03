@@ -7,6 +7,8 @@ from typing import List, Optional
 
 from googleapiclient.errors import HttpError
 
+from dance_aggregator import calendar
+
 logger = logging.getLogger("dance_aggregator")
 
 
@@ -27,6 +29,12 @@ class DanceStudioScraper:
 
     def get_events(self) -> List[Event]:
         raise NotImplementedError
+
+    def update_calendar(self):
+        events = self.get_events()
+        calendar.remove_events(self.calendar_id)
+        for event in events:
+            calendar.insert_event(event, self.calendar_id)
 
 
 class ExponentialBackoff:

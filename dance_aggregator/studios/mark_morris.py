@@ -16,6 +16,7 @@ logger = logging.getLogger("dance_aggregator")
 class MarkMorris(DanceStudioScraper):
     def __init__(self):
         super().__init__(studio_name="Mark Morris")
+        self.calendar_id = "cp6ffip3m9pbk30tvbl7vkv4a0@group.calendar.google.com"
 
     def make_event_record(self, session_soup: Tag) -> Event:
         title = session_soup.find("div", {"class": "bw-session__name"}).text.strip()

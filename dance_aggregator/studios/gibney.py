@@ -52,6 +52,7 @@ def make_event_record(studio_name: str, row_soup: Tag) -> Event:
 class Gibney(DanceStudioScraper):
     def __init__(self):
         super().__init__(studio_name="Gibney Dance")
+        self.calendar_id = "87nse6kec4lkia3dumm4hi92p0@group.calendar.google.com"
         self.soup = bs4.BeautifulSoup(
             requests.get(
                 "https://widgets.healcode.com/widgets/schedules/00108315175.json?mobile=false&version=0.1"
