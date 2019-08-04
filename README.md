@@ -1,5 +1,5 @@
 # DanceAggregator
-NYC dance class schedules all in one place! DanceAggregator scrapes the top studios in NYC and adds the classes to a google calendars.
+NYC dance class schedules all in one place! DanceAggregator scrapes the top studios in NYC and adds the events to google calendars.
 
 ## Calendars
 
