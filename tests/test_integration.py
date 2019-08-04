@@ -7,24 +7,30 @@ from dance_aggregator.studios import peridance
 
 
 def test_cunningham():
-    cunningham.Cunningham().get_events()
+    events = cunningham.Cunningham().get_events()
+    assert len(events) > 0
 
 
 def test_dance_wave():
-    dance_wave.DanceWave().get_events()
+    events = dance_wave.DanceWave().get_events()
+    assert len(events) > 0
 
 
 def test_gibney():
-    gibney.Gibney().get_events()
+    events = gibney.Gibney().get_events()
+    assert len(events) > 0
 
 
 def test_mark_morris():
-    mark_morris.MarkMorris().get_events()
+    events = mark_morris.MarkMorris().get_events()
+    assert len(events) > 0
 
 
 def test_movement_research():
-    movement_research.MovementResearch().get_events()
+    events = movement_research.MovementResearch().get_events()
+    assert len(events) > 0
 
 
 def test_peridance():
-    peridance.Peridance().get_events()
+    events = peridance.Peridance().get_events()
+    assert len(events) > 0
