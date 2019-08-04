@@ -22,9 +22,14 @@ class MarkMorris(DanceStudioScraper):
     def make_event_record(self, session_soup: Tag) -> Event:
         title = session_soup.find("div", {"class": "bw-session__name"}).text.strip()
 
-        instructor = session_soup.find(
-            "div", {"class": "bw-session__staff"}
-        ).text.strip()
+        instructor_div = session_soup.find("div", {"class": "bw-session__staff"})
+
+        if instructor_div is not None:
+            instructor = instructor_div.text.strip()
+        else:
+            instructor = "error parsing"
+            logger.error(f"Unable to parse instructor for {title}")
+
         if "substitute" in instructor:
             instructor = " ".join(instructor.split("            "))
         start_datetime = parser.parse(
