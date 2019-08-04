@@ -7,7 +7,8 @@ import bs4
 from bs4.element import Tag
 import requests
 
-from dance_aggregator.lib import DanceStudioScraper, Event
+from dance_aggregator.lib import DanceStudioScraper
+from dance_aggregator.models import Event
 
 logger = logging.getLogger("dance_aggregator")
 
@@ -33,7 +34,7 @@ def make_event_record(studio_name: str, row_soup: Tag) -> Event:
 
     url = row_soup.find("span", {"class": "classname"}).a.get("data-url")
 
-    class_page_soup = bs4.BeautifulSoup(requests.get(url).content, features="lxml")
+    class_page_soup = bs4.BeautifulSoup(requests.get(url).content, features="html.parser")
     location = class_page_soup.find(
         "div", {"class": "class_description"}
     ).span.text.split(": ")[-1]
@@ -57,7 +58,7 @@ class Gibney(DanceStudioScraper):
             requests.get(
                 "https://widgets.healcode.com/widgets/schedules/00108315175.json?mobile=false&version=0.1"
             ).json()["contents"],
-            features="lxml",
+            features="html.parser",
         )
 
     def get_events(self) -> List[Event]:

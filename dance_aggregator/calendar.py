@@ -1,13 +1,16 @@
 import logging
 import pathlib
+import time
 from datetime import datetime
+from functools import wraps
 from typing import List, Set
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 import pytz
 
-from dance_aggregator.lib import Event, ExponentialBackoff
+from dance_aggregator.models import Event
 
 logger = logging.getLogger("dance_aggregator")
 
@@ -17,7 +20,6 @@ CREDENTIALS_FILE = str(
     / "secrets"
     / "danceaggregator-6a8d8b9eac27.json"
 )
-CALENDAR_ID = "87nse6kec4lkia3dumm4hi92p0@group.calendar.google.com"
 
 
 def login():
@@ -28,6 +30,31 @@ def login():
 
 
 service = login()
+
+
+class ExponentialBackoff:
+    def __init__(self, initial_wait_secs=1, max_wait_secs=8):
+        self.initial_wait_secs = initial_wait_secs
+        self.max_wait_secs = max_wait_secs
+
+    def __call__(self, fn, *args, **kwargs):
+        @wraps(fn)
+        def retry_fn(*args, **kwargs):
+            sleeps = [self.initial_wait_secs]
+            wait = sleeps[-1]
+            while wait <= self.max_wait_secs:
+                wait *= 2
+                sleeps.append(wait)
+
+            for sleep in sleeps:
+                try:
+                    fn(*args, **kwargs)
+                    break
+                except HttpError as e:
+                    logger.info(f"Http error: backing off for {sleep}s - {e}")
+                    time.sleep(sleep)
+
+        return retry_fn
 
 
 def make_calendar_event_doc(event: Event) -> dict:

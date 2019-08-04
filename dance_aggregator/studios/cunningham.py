@@ -7,7 +7,8 @@ import bs4
 from bs4.element import Tag
 import requests
 
-from dance_aggregator.lib import DanceStudioScraper, Event
+from dance_aggregator.lib import DanceStudioScraper
+from dance_aggregator.models import Event
 
 logger = logging.getLogger("dance_aggregator")
 
@@ -48,7 +49,7 @@ class Cunningham(DanceStudioScraper):
     def get_events(self) -> List[Event]:
         page_soup = bs4.BeautifulSoup(
             requests.get("https://www.mercecunningham.org/activities/classes/").content,
-            features="lxml",
+            features="html.parser",
         )
         this_week_soup = page_soup.find("section", {"id": "schedule"})
         schedule_rows = this_week_soup.find_all(

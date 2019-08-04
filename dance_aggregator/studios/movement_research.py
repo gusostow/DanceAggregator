@@ -5,7 +5,8 @@ from urllib.parse import unquote
 
 import requests
 
-from dance_aggregator.lib import DanceStudioScraper, Event
+from dance_aggregator.lib import DanceStudioScraper
+from dance_aggregator.models import Event
 
 STUDIO = "Movement Research"
 

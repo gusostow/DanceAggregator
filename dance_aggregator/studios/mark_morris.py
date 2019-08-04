@@ -8,7 +8,8 @@ import bs4
 from bs4.element import Tag
 import requests
 
-from dance_aggregator.lib import DanceStudioScraper, Event
+from dance_aggregator.lib import DanceStudioScraper
+from dance_aggregator.models import Event
 
 logger = logging.getLogger("dance_aggregator")
 
@@ -71,7 +72,7 @@ class MarkMorris(DanceStudioScraper):
             )
 
             html: str = re.search(r'{"class_sessions":"(.+)","filters', raw).group(1)
-            soup = bs4.BeautifulSoup(html, features="lxml")
+            soup = bs4.BeautifulSoup(html, features="html.parser")
 
             sessions = soup.find_all("div", "bw-session")
             output += [

@@ -7,7 +7,8 @@ import numpy as np
 import pandas as pd
 import requests
 
-from dance_aggregator.lib import DanceStudioScraper, Event
+from dance_aggregator.lib import DanceStudioScraper
+from dance_aggregator.models import Event
 
 logger = logging.getLogger("dance_aggregator")
 
@@ -20,7 +21,7 @@ class Peridance(DanceStudioScraper):
     def parse_day_schedule(self, date: date) -> List[Event]:
         base_url = "http://www.peridance.com/openclasses.cfm"
         day_soup = bs4.BeautifulSoup(
-            requests.post(base_url, data={"testdate": date}).content, features="lxml"
+            requests.post(base_url, data={"testdate": date}).content, features="html.parser"
         )
 
         raw = pd.read_html(str(day_soup.table))[1]

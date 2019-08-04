@@ -9,7 +9,8 @@ import bs4
 from bs4.element import Tag
 import requests
 
-from dance_aggregator.lib import DanceStudioScraper, Event
+from dance_aggregator.lib import DanceStudioScraper
+from dance_aggregator.models import Event
 
 logger = logging.getLogger("dance_aggregator")
 
@@ -63,7 +64,7 @@ class DanceWave(DanceStudioScraper):
     def get_events(self) -> List[Event]:
         calendar_soup = bs4.BeautifulSoup(
             requests.get("https://dancewave.org/adult-classes/").content,
-            features="lxml",
+            features="html.parser",
         )
 
         event_divs = calendar_soup.find_all(
