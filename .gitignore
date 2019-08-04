@@ -127,3 +127,4 @@ secrets/
 
 # serverless framkework
 .serverless
+node_modules
