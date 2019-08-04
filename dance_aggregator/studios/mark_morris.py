@@ -19,16 +19,8 @@ class MarkMorris(DanceStudioScraper):
         super().__init__(studio_name="Mark Morris")
         self.calendar_id = "cp6ffip3m9pbk30tvbl7vkv4a0@group.calendar.google.com"
 
-    def make_event_record(self, session_soup: Tag) -> Event:
+    def make_event_record(self, session_soup: Tag, instructor: str) -> Event:
         title = session_soup.find("div", {"class": "bw-session__name"}).text.strip()
-
-        instructor_div = session_soup.find("div", {"class": "bw-session__staff"})
-
-        if instructor_div is not None:
-            instructor = instructor_div.text.strip()
-        else:
-            instructor = "error parsing"
-            logger.error(f"Unable to parse instructor for {title}")
 
         if "substitute" in instructor:
             instructor = " ".join(instructor.split("            "))
@@ -79,10 +71,26 @@ class MarkMorris(DanceStudioScraper):
             html: str = re.search(r'{"class_sessions":"(.+)","filters', raw).group(1)
             soup = bs4.BeautifulSoup(html, features="html.parser")
 
-            sessions = soup.find_all("div", "bw-session")
-            output += [
-                self.make_event_record(session_tag)
-                for session_tag in sessions
+            session_tags = [
+                session_tag
+                for session_tag in soup.find_all("div", "bw-session")
                 if "bw-session--empty" not in session_tag.get("class")
+            ]
+            instructor_tags = soup.find_all("div", "bw-session__staff")
+            n_session_tags, n_instructor_tags = len(session_tags), len(instructor_tags)
+            if n_session_tags != n_instructor_tags:
+                logger.error(
+                    f"Error parsing instructors because of length mismatch: {len(session_tags)}, {len(instructors_tags)}"
+                )
+                instructors = ["error parsing"] * len(session_tags)
+            else:
+                instructors = [
+                    instructor_tag.text.strip()
+                    for instructor_tag in soup.find_all("div", "bw-session__staff")
+                ]
+
+            output += [
+                self.make_event_record(session_tag, instructor)
+                for session_tag, instructor in zip(session_tags, instructors)
             ]
         return output
