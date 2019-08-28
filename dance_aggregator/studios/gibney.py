@@ -34,10 +34,13 @@ def make_event_record(studio_name: str, row_soup: Tag) -> Event:
 
     url = row_soup.find("span", {"class": "classname"}).a.get("data-url")
 
-    class_page_soup = bs4.BeautifulSoup(requests.get(url).content, features="html.parser")
+    class_page_soup = bs4.BeautifulSoup(
+        requests.get(url).content, features="html.parser"
+    )
+
     location = class_page_soup.find(
         "div", {"class": "class_description"}
-    ).span.text.split(": ")[-1]
+    ).strong.text.split(": ")[-1]
 
     return Event(
         title=title,
