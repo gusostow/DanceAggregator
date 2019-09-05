@@ -1,4 +1,6 @@
 service: dance-schedules-nyc
+tenant: augustusostow
+app: dance-aggregator
 
 provider:
   name: aws
@@ -14,23 +16,23 @@ functions:
       - schedule: cron(0 12 * * ? *)
   dance_wave:
     handler: handler.dance_wave_handler
-    events: 
+    events:
       - schedule: cron(30 12 * * ? *)
   gibney:
     handler: handler.gibney_handler
-    events: 
+    events:
       - schedule: cron(0 13 * * ? *)
   mark_morris:
     handler: handler.mark_morris_handler
-    events: 
+    events:
       - schedule: cron(30 13 * * ? *)
   movement_research:
     handler: handler.movement_research_handler
-    events: 
+    events:
       - schedule: cron(0 14 * * ? *)
   peridance:
     handler: handler.peridance_handler
-    events: 
+    events:
       - schedule: cron(30 14 * * ? *)
 
 plugins:
@@ -38,13 +40,12 @@ plugins:
   - serverless-plugin-aws-alerts
 
 custom:
-  
   pythonRequirements:
     dockerizePip: true
     usePoetry: true
     useDownloadCache: true
     useStaticCache: true
-  
+
   alerts:
     stages:
       - dev
