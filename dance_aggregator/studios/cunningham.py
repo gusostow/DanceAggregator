@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from dateutil import parser
-from typing import List
+from typing import List, Optional
 
 import bs4
 from bs4.element import Tag
@@ -18,7 +18,7 @@ class Cunningham(DanceStudioScraper):
         super().__init__(studio_name="Cunningham Trust")
         self.calendar_id = "g16a87cvnb8d7to3281m99fgq4@group.calendar.google.com"
 
-    def make_event_record(self, row_soup: Tag) -> Event:
+    def make_event_record(self, row_soup: Tag) -> Optional[Event]:
         spans = row_soup.find_all("span")
 
         time_raw: str = spans[0].text
@@ -27,7 +27,12 @@ class Cunningham(DanceStudioScraper):
 
         title = f"{instructor}'s Class"
 
-        day_raw, times_raw = time_raw.split(",")[1:]
+        try:
+            day_raw, times_raw = time_raw.split(",")[1:]
+        except ValueError as e:
+            logger.error(f"Unable to parse time {time_raw}. Skipping - {e}")
+            return
+
         start_raw, end_raw = times_raw.split(" -")
         start_datetime_raw = f"{day_raw} {start_raw}"
         end_datetime_raw = f"{day_raw} {end_raw.strip()}"
@@ -58,6 +63,11 @@ class Cunningham(DanceStudioScraper):
         output: List[Event] = []
         for row in schedule_rows:
             event = self.make_event_record(row)
+
+            # Error parsing date
+            if event is None:
+                continue
+
             if event.start_datetime.date() >= datetime.today().date():
                 output.append(event)
         return output
