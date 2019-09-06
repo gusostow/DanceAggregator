@@ -46,7 +46,12 @@ class Peridance(DanceStudioScraper):
 
             level = row.div.text.strip()
 
-            title = f"{level} {category}"
+            instructor = row.font.text
+
+            title = f"{level} {category} - {instructor}"
+
+            if "$(function" in title:
+                continue
 
             day_str = date.strftime("%Y-%m-%d")
             start_time_str, end_time_str = row.find(
@@ -56,8 +61,6 @@ class Peridance(DanceStudioScraper):
                 parser.parse(f"{day_str} {start_time_str}"),
                 parser.parse(f"{day_str} {end_time_str}"),
             )
-
-            instructor = row.font.text
 
             event_record = Event(
                 title=title,
